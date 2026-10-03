@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 
 const API = "http://localhost:5000";
@@ -50,13 +50,7 @@ function App() {
     return localStorage.getItem("newsHubProfileImage") || "";
   });
 
-  useEffect(() => {
-    if (user && view === "home") {
-      getNews();
-    }
-  }, [user, category]);
-
-  async function getNews() {
+  const getNews = useCallback(async () => {
     setLoading(true);
     setError("");
     setSelectedArticle(null);
@@ -77,7 +71,17 @@ function App() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [category]);
+
+  useEffect(() => {
+    if (!user || view !== "home") return;
+
+    const loadNews = async () => {
+      await getNews();
+    };
+
+    loadNews();
+  }, [user, view, getNews]);
 
   async function handleSearch(e) {
     e.preventDefault();
@@ -494,8 +498,6 @@ function App() {
             ← Back to News
           </button>
 
-          {/* AD BEFORE ARTICLE */}
-
           <AdSpace />
 
           <article className="article-detail">
@@ -549,8 +551,6 @@ function App() {
               </div>
             </div>
           </article>
-
-          {/* AD AFTER ARTICLE */}
 
           <AdSpace />
         </main>
@@ -732,8 +732,6 @@ function App() {
         <button type="submit">Search</button>
       </form>
 
-      {/* MAIN HOME AD */}
-
       <AdSpace />
 
       <main className="content">
@@ -796,8 +794,6 @@ function App() {
             ))}
           </div>
         )}
-
-        {/* SECOND HOME AD */}
 
         <AdSpace />
       </main>

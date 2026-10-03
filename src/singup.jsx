@@ -35,7 +35,7 @@ function Signup() {
       setName("");
       setEmail("");
       setPassword("");
-    } catch (error) {
+    } catch {
       setMessage("Could not connect to the server.");
     }
   };
